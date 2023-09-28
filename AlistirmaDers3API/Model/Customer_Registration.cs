@@ -1,22 +1,20 @@
 ﻿namespace AlistirmaDers3API.Model
 {
-    public class Customer
+    public class Customer_Registration
     {
-        private string Name;//
-        private string Surname;//
-        private string Username;//
-        private string Passport_ID_Number;//
-        private string Country;//
+        public string Name;//
+        public string Surname;//
+        public string Username;//
+        public string Passport_ID_Number;//
+        public string Country;//
         private string Date_OF_Birth;//
         private string ParaBirimi;//
         private string Cinsiyeti; //
         private int Customer_ID; //
         private string E_Mail_ID; //
-        private string Mobil_Telefon_Number; //
-        private string Meslegi_Jop; //
-        
+        public string Mobil_Telefon_Number; //
 
-        public string AdiniGoster() 
+        public string AdiniGoster()
         {
             return Name;
         }
@@ -26,11 +24,11 @@
             Name = name;
         }
 
-       public string SoyAdiRead()
+        public string SoyAdiRead()
         {
             return Surname;
-        }  
-        
+        }
+
         public void SoyAdiWrite(string soyad)
         {
             Surname = soyad;
@@ -44,7 +42,7 @@
         {
             Username = user;
         }
-        
+
         public string Pasaport_No_Oku()
         {
             return Passport_ID_Number;
@@ -64,6 +62,7 @@
         {
             Country = ulke;
         }
+
 
         public string Birth_OF_Tarihi_Oku()
         {
@@ -90,11 +89,6 @@
             return Cinsiyeti;
         }
 
-        public void Erkek_Mi_Kadin_Mİ_Yaz(string cins)
-        {
-            Cinsiyeti = cins;
-        }
-
         public int User_ID_Number_Oku()
         {
             return Customer_ID;
@@ -103,16 +97,6 @@
         public void User_ID_Number_Yaz(int id)
         {
             Customer_ID = id;
-        }
-
-        public string E_Mail_Adresini_Oku()
-        {
-            return E_Mail_ID;
-        }
-
-        public void E_Mail_Adresini_Yaz(string email)
-        {
-            E_Mail_ID = email;
         }
 
         public string Telefon_No_Oku()
@@ -125,16 +109,15 @@
             Mobil_Telefon_Number = telNo;
         }
 
-        public string Meslegi_Oku()
+        public string E_Mail_Adresini_Oku()
         {
-            return Meslegi_Jop;
+            return E_Mail_ID;
         }
 
-        public void Meslegi_Yaz(string jop)
+        public void E_Mail_Adresini_Yaz(string email)
         {
-            Meslegi_Jop = jop;
+            E_Mail_ID = email;
         }
-
 
 
     }

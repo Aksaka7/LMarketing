@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AlistirmaDers3API.Model;
+﻿using AlistirmaDers3API.Context;
 using AlistirmaDers3API.Model.EntityKayitExample;
-using Microsoft.EntityFrameworkCore;
-using AlistirmaDers3API.Context;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AlistirmaDers3API.Controllers
 {
-    public class CustomerController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RegisterController : ControllerBase
     {
         private readonly MarketingDBContext dbContect;
 
-        public CustomerController(MarketingDBContext dbContext)
+        public RegisterController(MarketingDBContext dbContext)
         {
             this.dbContect = dbContext;
         }

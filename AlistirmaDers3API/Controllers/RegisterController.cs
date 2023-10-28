@@ -1,5 +1,6 @@
 ﻿using AlistirmaDers3API.Context;
 using AlistirmaDers3API.Model.EntityKayitExample;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace AlistirmaDers3API.Controllers
             this.dbContext = dbContext;
             this.configuration = configuration;
         }
+
+        
 
         [HttpPost]
         [Route("Create")]
@@ -73,8 +76,8 @@ namespace AlistirmaDers3API.Controllers
             var expirationInMinutes = TimeSpan.FromMinutes(10);
             var expireMinute = DateTime.Now.AddMinutes(expirationInMinutes.Minutes);
 
-            var claims = new List<Claim>
-            {
+            var claims = new List<Claim> //Burda Bir Ekrana login işlemi sonrası gorune bilgi ayarlarını yapıyoruz
+            {//Şİfreli olan bilgilerde olması gereken detaylar gorunmesini saglıyoruz. 
                 new Claim(JwtRegisteredClaimNames.Sub, configuration["JwtSecurityToken:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,EpochTime.GetIntDate(DateTime.Now).ToString(), ClaimValueTypes.Integer64),
@@ -91,7 +94,7 @@ namespace AlistirmaDers3API.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityToken:Key"]));
             var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
+            var token = new JwtSecurityToken( // Token oluşturuyoruz ki bilgilerimiz şifreli iletilsin
                 issuer: configuration["JwtSecurityToken:Issuer"],
                 audience: configuration["JwtSecurityToken:Audience"],
                 claims: claims,

@@ -24,10 +24,10 @@ builder.Services.AddDbContext<MarketingDBContext>(options => options.UseSqlServe
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Mehmet's API",Version = "v1"});
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mehmet's API",Version = "v1"});
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Doðrulama kodu olmadan Ýþleme devam edemezsiniz.",
+        Description = "",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -87,7 +87,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var resp = "<html><b>You don't have access to this method. Forbidden</b></html>";
+var resp = "<html><b>Bu yönteme eriþiminiz yok. Yasaklý. Forbidden</b></html>";
 
 app.UseStatusCodePages(Text.Html, resp);
 

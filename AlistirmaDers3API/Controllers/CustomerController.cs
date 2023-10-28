@@ -3,6 +3,7 @@ using AlistirmaDers3API.Model;
 using AlistirmaDers3API.Model.EntityKayitExample;
 using Microsoft.EntityFrameworkCore;
 using AlistirmaDers3API.Context;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlistirmaDers3API.Controllers
 {
@@ -17,7 +18,7 @@ namespace AlistirmaDers3API.Controllers
 
 
         [HttpPost]
-        [Route("Registration")]
+        [Route("KullanıcıOluşturma")]
 
         public IActionResult RegisterUser([FromBody] RegisterCreateUserModel model)
         {
@@ -43,6 +44,33 @@ namespace AlistirmaDers3API.Controllers
             {
                 return Ok("Üye oluştu");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("ExampleAuthorize")]
+        public IActionResult ExampleAuthorize1(string name)
+        {
+            string result;
+
+            if (name.StartsWith("m"))
+            {
+                result = "İsminiz Küçük m harfi ile baslıyor";
+            }
+            else if (name.StartsWith("M"))
+            {
+                result = "İsminiz Küçük M harfi ile baslıyor";
+            }
+            else if (name.StartsWith("S"))
+            {
+                result = "İsminiz H harfi ile baslıyor";
+            }
+            else
+            {
+                result = "İsminiz m harfi ile baslamıyor.";
+            }
+
+            return Ok(result);
         }
 
     }

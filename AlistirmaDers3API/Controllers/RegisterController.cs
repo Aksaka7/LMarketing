@@ -2,6 +2,12 @@
 using AlistirmaDers3API.Model.EntityKayitExample;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AlistirmaDers3API.Controllers
 {
@@ -9,16 +15,17 @@ namespace AlistirmaDers3API.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private readonly MarketingDBContext dbContect;
+        private readonly IConfiguration configuration;
+        private readonly MarketingDBContext dbContext;
 
-        public RegisterController(MarketingDBContext dbContext)
+        public RegisterController(IConfiguration configuration, MarketingDBContext dbContext)
         {
-            this.dbContect = dbContext;
+            this.dbContext = dbContext;
+            this.configuration = configuration;
         }
 
-
         [HttpPost]
-        [Route("Registration")]
+        [Route("Create")]
 
         public IActionResult RegisterUser([FromBody] RegisterCreateUserModel model)
         {
@@ -32,9 +39,9 @@ namespace AlistirmaDers3API.Controllers
                 return BadRequest("Email ve Parola Boş bırakılamaz");
             }
 
-            dbContect.Registers.Add(new Context.Domain.Register { Name = model.Name, Surname = model.Surname, Email = model.Email, Password = model.Password, Id = Guid.NewGuid() });
+            dbContext.Registers.Add(new Context.Domain.Register { Name = model.Name, Username = model.Username, Surname = model.Surname, Email = model.Email, Password = model.Password, Id = Guid.NewGuid() });
 
-            var result = dbContect.SaveChanges();
+            var result = dbContext.SaveChanges();
 
             if (result < 0)
             {
@@ -45,6 +52,62 @@ namespace AlistirmaDers3API.Controllers
                 return Ok("Üye oluştu");
             }
         }
+
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult LoginUser([FromBody] LoginUserModel model)
+        {
+            if (string.IsNullOrEmpty(model.Email) && string.IsNullOrEmpty(model.Password))
+            {
+                return BadRequest("Email ve Password cannot be Empty");
+            }
+            var response = new UserModel();
+
+            var findUser = dbContext.Registers.FirstOrDefault(p => p.Email == model.Email && p.Password == model.Password);
+
+            if (findUser == null)
+            {
+                return NotFound("Girilen bilgiler Yanlış");
+            }
+
+            var expirationInMinutes = TimeSpan.FromMinutes(10);
+            var expireMinute = DateTime.Now.AddMinutes(expirationInMinutes.Minutes);
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, configuration["JwtSecurityToken:Subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat,EpochTime.GetIntDate(DateTime.Now).ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Exp,EpochTime.GetIntDate(expireMinute).ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Iss, configuration["JwtSecurityToken:Issuer"]),
+                new Claim(JwtRegisteredClaimNames.Aud, configuration["JwtSecurityToken:Issuer"]),
+                new Claim("Name",findUser.Name),
+                new Claim("Surname",findUser.Surname),
+                new Claim("Email", findUser.Email),
+                new Claim("Username", findUser.Username),
+                new Claim("UserId", findUser.Id.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityToken:Key"]));
+            var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: configuration["JwtSecurityToken:Issuer"],
+                audience: configuration["JwtSecurityToken:Audience"],
+                claims: claims,
+                expires: expireMinute,
+                signingCredentials: singIn);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            response.TokenExpireDate = expireMinute;
+            response.Authenticate = true;
+            response.Token = tokenHandler.WriteToken(token);
+
+            return Ok(JsonConvert.SerializeObject(response));
+
+        }
+
 
     }
 }

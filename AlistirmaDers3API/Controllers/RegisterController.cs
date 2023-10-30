@@ -12,6 +12,7 @@ using System.Text;
 
 namespace AlistirmaDers3API.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class RegisterController : ControllerBase
@@ -25,7 +26,34 @@ namespace AlistirmaDers3API.Controllers
             this.configuration = configuration;
         }
 
-        
+
+        [Authorize]
+        [HttpGet]
+        [Route("ExampleAuthorize")]
+        public IActionResult ExampleAuthorize1(string name)
+        {
+            string result;
+
+            if (name.StartsWith("m"))
+            {
+                result = "İsminiz Küçük m harfi ile baslıyor";
+            }
+            else if (name.StartsWith("M"))
+            {
+                result = "İsminiz Küçük M harfi ile baslıyor";
+            }
+            else if (name.StartsWith("S"))
+            {
+                result = "İsminiz H harfi ile baslıyor";
+            }
+            else
+            {
+                result = "İsminiz m harfi ile baslamıyor.";
+            }
+
+            return Ok(result);
+        }
+
 
         [HttpPost]
         [Route("Create")]
@@ -87,14 +115,15 @@ namespace AlistirmaDers3API.Controllers
                 new Claim("Name",findUser.Name),
                 new Claim("Surname",findUser.Surname),
                 new Claim("Email", findUser.Email),
-                new Claim("Username", findUser.Username),
                 new Claim("UserId", findUser.Id.ToString())
             };
 
+          
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityToken:Key"]));
             var singIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken( // Token oluşturuyoruz ki bilgilerimiz şifreli iletilsin
+            // Token oluşturuyoruz ki bilgilerimiz şifreli iletilsin
+            var token = new JwtSecurityToken(
                 issuer: configuration["JwtSecurityToken:Issuer"],
                 audience: configuration["JwtSecurityToken:Audience"],
                 claims: claims,

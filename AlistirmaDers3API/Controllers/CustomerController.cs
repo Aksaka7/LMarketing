@@ -46,32 +46,6 @@ namespace AlistirmaDers3API.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        [Route("ExampleAuthorize")]
-        public IActionResult ExampleAuthorize1(string name)
-        {
-            string result;
-
-            if (name.StartsWith("m"))
-            {
-                result = "İsminiz Küçük m harfi ile baslıyor";
-            }
-            else if (name.StartsWith("M"))
-            {
-                result = "İsminiz Küçük M harfi ile baslıyor";
-            }
-            else if (name.StartsWith("S"))
-            {
-                result = "İsminiz H harfi ile baslıyor";
-            }
-            else
-            {
-                result = "İsminiz m harfi ile baslamıyor.";
-            }
-
-            return Ok(result);
-        }
 
     }
 }

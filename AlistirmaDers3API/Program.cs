@@ -43,7 +43,7 @@ builder.Services.AddSwaggerGen(c =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 },
-                Scheme ="oauth2",
+                Scheme = "oauth2",
                 Name = "Bearer",
                 In = ParameterLocation.Header,
 
@@ -75,7 +75,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.Configure<JwtSecurityTokenSettings>
-    (builder.Configuration.GetSection("JwtSecurityToken"));
+        (builder.Configuration.GetSection("JwtSecurityToken"));
 
 
 var app = builder.Build();
@@ -87,9 +87,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var resp = "<html><b>Bu yönteme eriþiminiz yok. Yasaklý. Forbidden</b></html>";
+//var resp = "<html><b>Bu yönteme eriþiminiz yok. Yasaklý. Forbidden</b></html>";
 
-app.UseStatusCodePages(Text.Html, resp);
+//app.UseStatusCodePages(Text.Html, resp);
 
 app.UseHttpsRedirection();
 
